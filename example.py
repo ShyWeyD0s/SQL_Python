@@ -24,5 +24,10 @@ try:
         
 except Exception as e:
     print(f"Ocurrió un error al consultar las tablas: {e}")
+    
 finally:
-    engine.dispose()  # Cerrar la conexión al finalizar
+    engine.dispose()
+    
+
+
+

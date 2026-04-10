@@ -14,35 +14,52 @@ engine = create_engine(url_conexion)
 tablas = ['ventas', 'productos', 'clientes', 'empleados']
 
 
-try:
-    for tabla in tablas:
-        print(f"\n--- Datos de la tabla: {tabla} ---")
-        query = f"SELECT * FROM {tabla}"
-        df = pd.read_sql(query, engine)
-        print(df.head())
-except Exception as e:
-    print(f"Ocurrió un error al consultar las tablas: {e}")
-    
-finally:
-    engine.dispose()
-    
-    
-# calcular el total de ventas por producto  
 
-try:    
+try:
+    # 1. Total de ventas por producto 
     print("\n--- Total de ventas por producto ---")
-    query = """
-    SELECT p.nombre_producto, SUM(v.cantidad) AS total_ventas
+    query_ventas = """
+    SELECT p.producto, SUM(v.cantidad) AS total_ventas
     FROM ventas v
-    JOIN productos p ON v.producto_id = p.id
-    GROUP BY p.nombre_producto
+    JOIN productos p ON v.id = p.id
+    GROUP BY p.producto
     ORDER BY total_ventas DESC;
     """
-    df_ventas = pd.read_sql(query, engine)
+    df_ventas = pd.read_sql(query_ventas, engine)
     print(df_ventas)
     
-except Exception as e:
-    print(f"Ocurrió un error al calcular el total de ventas por producto: {e}")
+    # 2. Ventas por ciudad 
+    print("\n--- Ventas por ciudad ---")
+    query_ciudad = """
+    SELECT c.ciudad, SUM(v.cantidad) AS total_ventas
+    FROM ventas v
+    JOIN clientes c ON v.id = c.id
+    GROUP BY c.ciudad
+    ORDER BY total_ventas DESC;
+    """
+    df_ciudad = pd.read_sql(query_ciudad, engine)
+    print(df_ciudad)
     
+    # top productos vendidos
+    print("\n--- Top productos vendidos ---")
+    query_top_productos = """
+    SELECT p.producto, SUM(v.cantidad) AS total_ventas
+    FROM ventas v
+    JOIN productos p ON v.id = p.id
+    GROUP BY p.producto
+    ORDER BY total_ventas DESC
+    LIMIT 5;
+    """
+    df_top_productos = pd.read_sql(query_top_productos, engine)
+    print(df_top_productos)
+    
+ 
+
+except Exception as e:
+
+    print(f"Error: {e}")
+    df_debug = pd.read_sql("SELECT * FROM ventas LIMIT 1", engine)
+    print(df_debug.columns.tolist())
+
 finally:
     engine.dispose()

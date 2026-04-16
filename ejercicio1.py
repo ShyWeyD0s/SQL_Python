@@ -2,16 +2,30 @@
 from sqlalchemy import create_engine
 import pandas as pd
 
-# Definir la URL de conexión
-# Formato: mysql+pymysql://usuario:password@host/nombre_bd
+# Definir el el lenguaje+driver la url de la conexion local 
 url_conexion = "mysql+pymysql://root:@127.0.0.1/ejercicio_bd_py"
 
-# Crear el Engine
+# Crear el Engine, que es la conexión a la base de datos
 engine = create_engine(url_conexion)
 
 
-# realizar la consulta 
-tablas = ['ventas', 'productos', 'clientes', 'empleados']
+# Configurar las tablas para consultar todas de manera simplificada con un bucle for 
+tablas = [
+    'ventas', 
+    'productos', 
+    'clientes', 
+    'empleados'
+]
+
+
+print("\n--- Tablas disponibles ---")
+
+for i in tablas:
+        query_bucle = f"SELECT * FROM {i} LIMIT 5;"
+        df = pd.read_sql(query_bucle, engine)
+        print(f"\n--- Tabla: {i} ---")
+        print(df)
+        
 
 
 
@@ -43,9 +57,9 @@ try:
     # top productos vendidos
     print("\n--- Top productos vendidos ---")
     query_top_productos = """
-    SELECT p.producto, SUM(v.cantidad) AS total_ventas
-    FROM ventas v
-    JOIN productos p ON v.id = p.id
+    SELECT p.producto, 
+    SUM(v.cantidad) AS total_ventas
+    FROM ventas v JOIN productos p ON v.id = p.id
     GROUP BY p.producto
     ORDER BY total_ventas DESC
     LIMIT 5;
@@ -57,9 +71,12 @@ try:
 
 except Exception as e:
 
-    print(f"Error: {e}")
+    print(f"Error en las consultas: {e}")
+    # realizar un debug con una consulta simple para verificar la conexión y las columnas disponibles
     df_debug = pd.read_sql("SELECT * FROM ventas LIMIT 1", engine)
+    print("\n--- Debug ---")
     print(df_debug.columns.tolist())
 
 finally:
+    # cerrar la conexion, buena practica 
     engine.dispose()

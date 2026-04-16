@@ -13,7 +13,7 @@ try:
     query_departamento_salario = """
     
     SELECT e.departamento, AVG(e.salario) AS salario_promedio
-    FROM empleado e GROUP BY e.departamento ORDER BY salario_promedio DESC
+    FROM empleados e GROUP BY e.departamento ORDER BY salario_promedio DESC
     LIMIT 3;
     
     """
@@ -27,7 +27,7 @@ try:
     query_empleado_salario = """
     
     SELECT e.nombre, AVG(e.salario) AS salario_empleado_promedio
-    FROM empleado e GRUP BY e.nombre ORDER BY salario_empleado_promedio DESC
+    FROM empleados e GROUP BY e.nombre ORDER BY salario_empleado_promedio DESC
     LIMIT 3;
     
     """
@@ -39,8 +39,8 @@ try:
     #antiguedad promedio 
     
     query_antiguedad = """
-    SELECT e.departamento, AVG(YEAR(CURDATE()) - YEAR(e.fecha_contratacion)) AS antiguedad_promedio
-    FROM empleado e GROUP BY e.departamento ORDER BY antiguedad_promedio DESC;
+    SELECT e.departamento, AVG(e.antiguedad) AS antiguedad_promedio
+    FROM empleados e GROUP BY e.departamento ORDER BY antiguedad_promedio DESC;
     
     """
     
